@@ -4,7 +4,7 @@ using ProtoBuf;
 
 namespace Edit.Protobuf
 {
-    public class StreamStoreProtobufSerializer : ISerializer
+    public class ProtobufSerializer : ISerializer
     {
         public void Serialize<T>(T instance, Stream target) where T : class
         {

@@ -2,13 +2,13 @@
 {
     public sealed class Record
     {
-        public byte[] Bytes { get; private set; }
-        public long Index { get; private set; }
+        public byte[] Data { get; private set; }
+        public string StreamVersion { get; private set; }
 
-        public Record(byte[] bytes, long index)
+        public Record(byte[] data, string streamVersion)
         {
-            Bytes = bytes;
-            Index = index;
+            Data = data;
+            StreamVersion = streamVersion;
         }
     }
 }

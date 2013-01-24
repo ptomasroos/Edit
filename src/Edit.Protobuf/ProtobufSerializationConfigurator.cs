@@ -4,9 +4,9 @@ namespace Edit.Protobuf
 {
     public static class ProtobufSerializationConfigurator
     {
-        public static void WithProtobufSerialization(this StreamStoreConfigurator configurator)
+        public static void WithProtobufSerialization(this EventStoreConfigurator configurator)
         {
-            configurator.WithSerializer(new StreamStoreProtobufSerializer());
+            configurator.WithSerializer(new ProtobufSerializer());
         }
     }
 }
