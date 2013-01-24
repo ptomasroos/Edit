@@ -81,9 +81,7 @@ namespace Edit.PerformanceTests
 
         private async Task<IStreamStore> WireupEventStoreAsync()
         {
-            var cloudStorageAccount =
-                CloudStorageAccount.Parse(
-                    "DefaultEndpointsProtocol=https;AccountName=ats2;AccountKey=99tDnJ2vbrjmuSuuErBUr+4IH/OcD7PmwKUUQuLXZAhlLZ8H575rSfl4zSFQj9q5OROFHL36FMhH4DpIDvm9Lw=="); //CloudStorageAccount.DevelopmentStorageAccount;
+            var cloudStorageAccount = CloudStorageAccount.DevelopmentStorageAccount;
 
             var tableStore = await AzureTableStorageAppendOnlyStore.CreateAsync(cloudStorageAccount, "performancetests");
             return StreamStore.Create(configure =>
