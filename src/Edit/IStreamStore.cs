@@ -7,10 +7,10 @@ namespace Edit
 {
     public interface IStreamStore
     {
-        Task AppendAsync(string streamName, IEnumerable<Chunk> chunks, string expectedVersion = null);
-        Task AppendAsync(string streamName, IEnumerable<Chunk> chunks, TimeSpan timeout, string expectedVersion = null);
-        Task AppendAsync(string streamName, IEnumerable<Chunk> chunks, CancellationToken token, string expectedVersion = null);
-        Task AppendAsync(string streamName, IEnumerable<Chunk> chunks, TimeSpan timeout, CancellationToken token, string expectedVersion = null);
+        Task AppendAsync(string streamName, IEnumerable<Chunk> chunks, string expectedVersion);
+        Task AppendAsync(string streamName, IEnumerable<Chunk> chunks, TimeSpan timeout, string expectedVersion);
+        Task AppendAsync(string streamName, IEnumerable<Chunk> chunks, CancellationToken token, string expectedVersion);
+        Task AppendAsync(string streamName, IEnumerable<Chunk> chunks, TimeSpan timeout, CancellationToken token, string expectedVersion);
 
         Task<ChunkSet> ReadAsync(string streamName);
         Task<ChunkSet> ReadAsync(string streamName, TimeSpan timeout);

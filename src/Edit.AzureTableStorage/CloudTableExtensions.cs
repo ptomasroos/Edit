@@ -1,31 +1,20 @@
-﻿using Microsoft.Practices.TransientFaultHandling;
-using Microsoft.WindowsAzure.Storage.Table;
-using System;
+﻿using Microsoft.WindowsAzure.Storage.Table;
 using System.Threading.Tasks;
 
 namespace Edit.AzureTableStorage
 {
     internal static class CloudTableExtensions
     {
-        private static readonly RetryPolicy RetryPolicy =
-            new RetryPolicy<StorageTransientErrorDetectionStrategy>(new ExponentialBackoff("Retry exponentially",
-                                                                                           int.MaxValue,
-                                                                                           TimeSpan.FromMilliseconds(10),
-                                                                                           TimeSpan.FromSeconds(2),
-                                                                                           TimeSpan.FromMilliseconds(30),
-                                                                                           true));
-
         public static async Task<bool> CreateIfNotExistAsync(this CloudTable cloudTable)
         {
-            return await RetryPolicy.ExecuteAsync(() => Task.Factory.FromAsync<bool>(cloudTable.BeginCreateIfNotExists,
-                                                                                     cloudTable.EndCreateIfNotExists,
-                                                                                     null));
+            return await Task.Factory.FromAsync<bool>(cloudTable.BeginCreateIfNotExists, cloudTable.EndCreateIfNotExists, null);
         }
 
         public static async Task<TableResult> ExecuteAsync(this CloudTable cloudTable, TableOperation tableOperation)
         {
-            return await RetryPolicy.ExecuteAsync(() =>
-                               Task<TableResult>.Factory.FromAsync(cloudTable.BeginExecute, cloudTable.EndExecute, tableOperation, null));
+            return
+                await
+                Task<TableResult>.Factory.FromAsync(cloudTable.BeginExecute, cloudTable.EndExecute, tableOperation, null);
         }
 
         public static async Task<T> RetrieveAsync<T>(this CloudTable cloudTable, string partitionKey, string rowKey) where T : class, ITableEntity
@@ -37,8 +26,15 @@ namespace Edit.AzureTableStorage
 
         public static async Task InsertAsync<T>(this CloudTable cloudTable, T tableEntity) where T : class, ITableEntity
         {
-            var insertOperation = TableOperation.InsertOrReplace(tableEntity);
+            var insertOperation = TableOperation.Insert(tableEntity);
             await cloudTable.ExecuteAsync(insertOperation);
         }
+
+        public static async Task ReplaceAsync<T>(this CloudTable cloudTable, T tableEntity) where T : class, ITableEntity
+        {
+            var insertOperation = TableOperation.Replace(tableEntity);
+            await cloudTable.ExecuteAsync(insertOperation);
+        }
+
     }
 }

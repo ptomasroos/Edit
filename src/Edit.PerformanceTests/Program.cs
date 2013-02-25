@@ -15,7 +15,7 @@ namespace Edit.PerformanceTests
     {
         private static readonly List<Guid> _ids = new List<Guid>();
 
-        const int NumberOfInsertions = 1000000;
+        const int NumberOfInsertions = 1000;
 
         public static void Main(string[] args)
         {
@@ -48,7 +48,7 @@ namespace Edit.PerformanceTests
                 var task = eventStore.AppendAsync(e.Id.ToString(), new List<Chunk>()
                     {
                         new Chunk() {Instance = e}
-                    });
+                    }, null);
                 tasks.Enqueue(task);
 
                 _ids.Add(e.Id);

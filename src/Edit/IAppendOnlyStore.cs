@@ -16,5 +16,4 @@ namespace Edit
         Task<Record> ReadAsync(string streamName, CancellationToken token);
         Task<Record> ReadAsync(string streamName, TimeSpan timeout, CancellationToken token);
     }
-
 }
