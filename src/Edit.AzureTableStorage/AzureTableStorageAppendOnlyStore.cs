@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -10,6 +11,7 @@ namespace Edit.AzureTableStorage
     {
         private CloudTableClient _cloudTableClient;
         private CloudTable _cloudTable;
+        private static readonly ILog Logger = LogManager.GetCurrentClassLogger();
 
         private const string RowKey = "0";
 
@@ -109,11 +111,24 @@ namespace Edit.AzureTableStorage
 
             try
             {
+                Logger.DebugFormat("BEGIN: Retrieve cloud table entity async");
                 var entity = await _cloudTable.RetrieveAsync<AppendOnlyStoreTableEntity>(streamName, RowKey);
-                return new Record(entity.Data, entity.ETag);
+                Logger.DebugFormat("END: Retrieve cloud table entity async");
+
+                if (entity == null)
+                {
+                    Logger.InfoFormat("Entity returned was null");
+                    return null;
+                }
+                else
+                {
+                    return new Record(entity.Data, entity.ETag);
+                }                
             }
             catch (StorageException exception)
             {
+                Logger.DebugFormat("ERROR: Exception {0} while retrieving cloud table entity async", exception);
+
                 if (exception.RequestInformation.HttpStatusCode != 404)
                 {
                     throw;
@@ -124,7 +139,9 @@ namespace Edit.AzureTableStorage
 
             if (isMissing)
             {
+                Logger.DebugFormat("BEGIN: Insert empty async");
                 await InsertEmptyAsync(streamName, timeout, token);
+                Logger.DebugFormat("END: Insert empty async");
             }
 
             return await ReadAsync(streamName, timeout, token);
