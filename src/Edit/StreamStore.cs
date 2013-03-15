@@ -85,11 +85,9 @@ namespace Edit
 
         public async Task<ChunkSet> ReadAsync(string streamName, TimeSpan timeout, CancellationToken token)
         {
-            Logger.DebugFormat("BEGIN: Read async from the append only store");
+            Logger.DebugFormat("BEGIN: Read async from the append only store. Streamname : '{0}'", streamName);
             var record = await _settings.AppendOnlyStore.ReadAsync(streamName, timeout, token);
-            Logger.DebugFormat("END: Read async from the append only store");
-
-            if (record == null) return null;
+            Logger.DebugFormat("END: Read async from the append only store. Streamname : '{0}'", streamName);
 
             using (var memoryStream = new MemoryStream(record.Data))
             {

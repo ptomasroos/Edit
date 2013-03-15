@@ -111,14 +111,14 @@ namespace Edit.AzureTableStorage
 
             try
             {
-                Logger.DebugFormat("BEGIN: Retrieve cloud table entity async");
+                Logger.DebugFormat("BEGIN: Retrieve cloud table entity async id: '{0}', thread: '{1}'", streamName, Thread.CurrentThread.ManagedThreadId);
                 var entity = await _cloudTable.RetrieveAsync<AppendOnlyStoreTableEntity>(streamName, RowKey);
-                Logger.DebugFormat("END: Retrieve cloud table entity async");
+                Logger.DebugFormat("END: Retrieve cloud table entity async id: '{0}', thread: '{1}'", streamName, Thread.CurrentThread.ManagedThreadId);
 
                 if (entity == null)
                 {
-                    Logger.InfoFormat("Entity returned was null");
-                    return null;
+                    Logger.InfoFormat("No entity was found with stream name '{0}'", streamName);
+                    isMissing = true;
                 }
                 else
                 {
@@ -139,9 +139,9 @@ namespace Edit.AzureTableStorage
 
             if (isMissing)
             {
-                Logger.DebugFormat("BEGIN: Insert empty async");
+                Logger.DebugFormat("BEGIN: Insert empty async: StreamName: '{0}'", streamName);
                 await InsertEmptyAsync(streamName, timeout, token);
-                Logger.DebugFormat("END: Insert empty async");
+                Logger.DebugFormat("END: Insert empty async: StreamName: '{0}'", streamName);
             }
 
             return await ReadAsync(streamName, timeout, token);
@@ -157,7 +157,14 @@ namespace Edit.AzureTableStorage
                 Data = new byte[0]
             };
 
-            await _cloudTable.InsertAsync(entity);
+            try
+            {
+                await _cloudTable.InsertAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("ERROR: Exception thrown while inserting empty on id {0}", ex, streamName);
+            }
         }
 
         #endregion
